@@ -1,0 +1,62 @@
+clc;
+clear all;
+close all;
+
+% Given Data
+time = 1:10;
+
+temperature = [70 72 74 73 75 74 73 71 70 69];   % in degree Celsius
+vibration   = [3 4 5 5 6 6 5 4 3 3];             % in mm/s
+
+% Statistical Calculations
+mean_temp = mean(temperature);
+mean_vib  = mean(vibration);
+
+var_temp = var(temperature);
+var_vib  = var(vibration);
+
+corr_coeff = corrcoef(temperature, vibration);
+cross_cov  = cov(temperature, vibration);
+
+% Display Results
+disp('Mean of Temperature (°C):');
+disp(mean_temp);
+
+disp('Mean of Vibration (mm/s):');
+disp(mean_vib);
+
+disp('Variance of Temperature:');
+disp(var_temp);
+
+disp('Variance of Vibration:');
+disp(var_vib);
+
+disp('Cross Covariance Matrix:');
+disp(cross_cov);
+
+disp('Correlation Coefficient Matrix:');
+disp(corr_coeff);
+
+% Plotting
+figure;
+
+subplot(3,1,1);
+plot(time, temperature, '-o');
+xlabel('Time');
+ylabel('Temperature (°C)');
+title('Temperature vs Time');
+grid on;
+
+subplot(3,1,2);
+plot(time, vibration, '-o');
+xlabel('Time');
+ylabel('Vibration (mm/s)');
+title('Vibration vs Time');
+grid on;
+
+subplot(3,1,3);
+plot(temperature, vibration, '-o');
+xlabel('Temperature (°C)');
+ylabel('Vibration (mm/s)');
+title('Vibration vs Temperature');
+grid on;
