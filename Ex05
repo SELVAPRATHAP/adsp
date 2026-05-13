@@ -1,0 +1,63 @@
+clc;
+clear;
+close all;
+
+% Input signal
+x = [2, 4 ,6,8 ,10];
+
+% Desired signal
+d = [3 ,6 ,9,12 ,15];
+
+N = length(x);
+
+% Form input matrix (2-tap FIR)
+X = [];
+D = [];
+
+for n = 2:N
+    X = [X; x(n) x(n-1)];
+    D = [D; d(n)];
+end
+
+% Autocorrelation matrix
+R = (X' * X) / length(D);
+
+% Cross-correlation vector
+p = (X' * D) / length(D);
+
+% Wiener filter weights
+w = inv(R) * p;
+
+disp('Autocorrelation matrix R =');
+disp(R);
+
+disp('Cross-correlation vector p =');
+disp(p);
+
+disp('Wiener filter weights w =');
+disp(w);
+
+% Filter output
+y = X * w;
+
+% Error signal
+e = D - y;
+
+% Plot results
+subplot(3,1,1);
+stem(D, 'filled');
+title('Desired Signal d(n)');
+xlabel('n');
+ylabel('Amplitude');
+
+subplot(3,1,2);
+stem(y, 'filled');
+title('Wiener Filter Output y(n)');
+xlabel('n');
+ylabel('Amplitude');
+
+subplot(3,1,3);
+stem(e, 'filled');
+title('Error Signal e(n)');
+xlabel('n'); 
+ylabel('Amplitude');
