@@ -1,0 +1,80 @@
+clc;
+clear;
+close all;
+
+% Given signal
+x = [1 1 2 2 3 3 4 4];
+N = length(x);
+
+%% 1. Normal Periodogram
+X = fft(x,N);
+P = (1/N)*abs(X).^2;
+
+figure(1);
+stem(0:N-1,P)
+title('Normal Periodogram')
+xlabel('Frequency Bin')
+ylabel('Power')
+
+%% 2. Modified Periodogram (Hanning Window)
+w = hann(N)';
+xw = x.*w;
+
+Xw = fft(xw,N);
+Pm = (1/N)*abs(Xw).^2;
+
+figure(2);
+stem(0:N-1,Pm)
+title('Modified Periodogram')
+xlabel('Frequency Bin')
+ylabel('Power')
+
+%% 3. Bartlett Method (Periodogram Averaging)
+L = 4;              % segment length
+K = N/L;            % number of segments
+Pb = zeros(1,L);
+
+for i = 1:K
+    segment = x((i-1)*L+1 : i*L);
+    Xs = fft(segment,L);
+    Ps = (1/L)*abs(Xs).^2;
+    Pb = Pb + Ps;
+end
+
+Pb = Pb/K;
+
+figure(3);
+stem(0:L-1,Pb)
+title('Bartlett Method')
+xlabel('Frequency Bin')
+ylabel('Power')
+
+%% 4. Welch Method
+L = 4;                      % segment length
+overlap = L/2;
+step = L - overlap;
+index = 1;
+Pw = zeros(1,L);
+count = 0;
+
+while (index+L-1) <= N
+    segment = x(index:index+L-1);
+    
+    w = hann(L)';
+    segment = segment.*w;
+    
+    Xs = fft(segment,L);
+    Ps = (1/L)*abs(Xs).^2;
+    
+    Pw = Pw + Ps;
+    
+    index = index + step;
+    count = count + 1;
+end
+
+Pw = Pw/count;
+figure(4);
+stem(0:L-1,Pw)
+title('Welch Method')
+xlabel('Frequency Bin')
+ylabel('Power')
