@@ -1,0 +1,94 @@
+clc;
+clear;
+close all;
+
+%% Case Study: Temperature → Vibration using ARX Model
+
+%% Step 1: Generate Temperature Signal
+N = 500;
+n = 1:N;
+
+T = 30 + 0.02*n + 0.5*randn(1,N);   % Temperature (slow variation)
+
+figure;
+plot(T);
+title('Machine Temperature');
+xlabel('Time');
+ylabel('Temperature (°C)');
+grid on;
+
+disp(['Mean Temperature = ', num2str(mean(T))]);
+
+%% Step 2: Generate Vibration using ARX (Ground Truth)
+w = randn(1,N);     % Noise
+x = zeros(1,N);    % Actual vibration
+
+a1 = 0.8;
+a2 = -0.3;
+b1 = 0.05;
+
+for n = 3:N
+    x(n) = a1*x(n-1) + a2*x(n-2) + b1*T(n-1) + w(n);
+end
+
+figure;
+plot(x);
+title('Actual Machine Vibration');
+xlabel('Time');
+ylabel('Amplitude');
+grid on;
+
+disp(['Mean Actual Vibration = ', num2str(mean(x))]);
+
+%% Step 3: AR Model (Ignoring Temperature)
+x_ar = zeros(1,N);
+
+for n = 3:N
+    x_ar(n) = a1*x_ar(n-1) + a2*x_ar(n-2) + w(n);
+end
+
+figure;
+plot(x,'b'); 
+hold on;
+plot(x_ar,'r');
+legend('Actual','AR Model');
+title('AR Model (No Temperature)');
+xlabel('Time');
+ylabel('Amplitude');
+grid on;
+
+disp(['Mean AR Model Output = ', num2str(mean(x_ar))]);
+
+%% Step 4: ARX Model (Including Temperature)
+x_arx = zeros(1,N);
+
+for n = 3:N
+    x_arx(n) = a1*x_arx(n-1) + a2*x_arx(n-2) + b1*T(n-1);
+end
+
+figure;
+plot(x,'b'); hold on;
+plot(x_arx,'g');
+legend('Actual','ARX Model');
+title('ARX Model (Temperature Included)');
+xlabel('Time');
+ylabel('Amplitude');
+grid on;
+
+disp(['Mean ARX Model Output = ', num2str(mean(x_arx))]);
+
+%% Step 5: Error Comparison
+err_ar  = x - x_ar;
+err_arx = x - x_arx;
+
+figure;
+plot(err_ar); hold on;
+plot(err_arx);
+legend('AR Error','ARX Error');
+title('Error Comparison');
+xlabel('Time');
+ylabel('Error');
+grid on;
+
+disp(['Mean AR Error = ', num2str(mean(err_ar))]);
+disp(['Mean ARX Error = ', num2str(mean(err_arx))]);
