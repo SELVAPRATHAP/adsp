@@ -1,0 +1,43 @@
+% EXPERIMENT NO: 6
+% IMPLEMENTATION OF WIENER IIR FILTER
+
+clc;
+close all;
+clear all;
+
+% Autocorrelation and cross-correlation matrices
+Rxx = [4 1;  1 4];
+
+Rdx = [3; 1];
+
+% Wiener solution
+b = inv(Rxx) * Rdx;
+
+b0 = b(1);
+b1 = b(2);
+
+disp('b0 = ');
+disp(b0);
+
+disp('b1 = ');
+disp(b1);
+
+% IIR denominator coefficient
+a1 = -Rxx(1,2) / Rxx(1,1);
+
+disp('IIR Denominator coefficient a1 = ');
+disp(a1);
+
+% Transfer function
+num = [b0 b1];
+den = [1 a1];
+
+tf_system = tf(num, den);
+
+disp('Transfer Function:');
+disp(tf_system);
+
+% Frequency response
+figure;
+freqz(num, den);
+title('Wiener IIR Filter');
